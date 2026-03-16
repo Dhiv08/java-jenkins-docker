@@ -1,0 +1,52 @@
+pipeline {
+  agent any
+  tools { maven 'Maven_3.9.13' }
+
+  environment {
+    APP_NAME = 'java-jenkins-app'
+  }
+
+  stages {
+    stage('Checkout') { steps { checkout scm } }
+
+    stage('Build JAR') {
+      steps {
+        bat '''
+          mvn -v
+          mvn -U -DskipTests clean package
+          dir target
+        '''
+      }
+    }
+
+    stage('Build Docker Image') {
+      steps {
+        script { env.IMG = "${env.APP_NAME}:${env.BUILD_NUMBER}" }
+        bat """
+          docker version
+          docker build -t %IMG% .
+          docker images | findstr %APP_NAME%
+        """
+      }
+    }
+
+    stage('Run Container (same machine)') {
+      steps {
+        bat """
+          docker rm -f %APP_NAME% 2>nul || exit /b 0
+          docker run -d --name %APP_NAME% %IMG%
+          docker ps | findstr %APP_NAME%
+        """
+      }
+    }
+
+    stage('Verify (logs/status)') {
+      steps {
+        bat """
+          docker inspect -f "{{.State.Status}}" %APP_NAME%
+          docker logs --tail 200 %APP_NAME%
+        """
+      }
+    }
+  }
+}
