@@ -12,15 +12,24 @@ pipeline {
       steps { checkout scm }
     }
 
-    stage('Build JAR') {
-      steps {
-        bat '''
-          mvn -v
-          mvn -U -DskipTests clean package
-          dir target
-        '''
-      }
-    }
+stage('Build JAR') {
+  steps {
+    bat '''
+      mvn -v
+      mvn -U -DskipTests clean package
+
+      echo ===== Listing target folder =====
+      dir target
+
+      echo ===== Checking for target\\app.jar =====
+      if not exist target\\app.jar (
+        echo ERROR: target\\app.jar not found.
+        echo If you see a different jar name above, we will copy/rename it.
+        exit /b 1
+      )
+    '''
+  }
+}
 
     stage('Build Docker Image (local only)') {
       steps {
