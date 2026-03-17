@@ -16,14 +16,10 @@ pipeline {
       steps {
         bat '''
           @echo on
-          mvn -v
-          mvn -U -DskipTests clean package
+          call mvn -v
+          call mvn -U -DskipTests clean package
 
           echo ===== List target folder =====
-          if not exist target (
-            echo ERROR: target folder not created. Maven build likely failed.
-            exit /b 1
-          )
           dir target
 
           echo ===== Ensure target\\app.jar exists (normalize jar name) =====
@@ -86,7 +82,6 @@ pipeline {
 
   post {
     always {
-      // Cleanup should not fail the whole build
       bat """
         @echo on
         docker rm -f %APP_NAME% 2>nul || exit /b 0
