@@ -2,10 +2,9 @@ pipeline {
   agent any
 
 tools {
-  jdk   'jdk17'
+  jdk   'JDK17'
   maven 'Maven_3.9.13'
 }
-
   parameters {
     booleanParam(name: 'SKIP_PUSH', defaultValue: false, description: 'Skip pushing image to Harbor')
     booleanParam(name: 'SKIP_K8S_DEPLOY', defaultValue: false, description: 'Skip Kubernetes deploy')
