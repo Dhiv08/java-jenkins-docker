@@ -1,10 +1,10 @@
 pipeline {
   agent any
 
-  tools {
-    jdk   'jdk25'
-    maven 'M3911'
-  }
+tools {
+  jdk   'jdk17'
+  maven 'Maven_3.9.13'
+}
 
   parameters {
     booleanParam(name: 'SKIP_PUSH', defaultValue: false, description: 'Skip pushing image to Harbor')
