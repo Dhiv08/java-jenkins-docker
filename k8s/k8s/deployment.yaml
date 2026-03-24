@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: basic-java-hello
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: basic-java-hello
+  template:
+    metadata:
+      labels:
+        app: basic-java-hello
+    spec:
+      containers:
+        - name: basic-java-hello
+          image: occ-harbor.oraclecorp.com/brm12ps8/basic-java-hello:1
+          ports:
+            - containerPort: 8080
